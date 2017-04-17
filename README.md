@@ -10,8 +10,8 @@ Use template strings to define your grammar.
 ```js
 const bnf = require('grammar')
 
-const id = ([x]) => x
-const select = n => d => d[n]
+const id = x => x
+const select = n => function() { return arguments[n] }
 const newObject = () => ({})
 const newArray = () => []
 
@@ -21,12 +21,12 @@ const jsonGrammar = bnf`
 
   object  -> "{" members "}" ${select(1)}
   members -> null         ${newObject}
-           | members pair ${([obj, pair]) => Object.assign(obj, pair)}
-  pair -> string ":" value  ${([key, _, value]) => ({[key]: value})}
+           | members pair ${(obj, pair) => Object.assign(obj, pair)}
+  pair -> string ":" value  ${(key, _, value) => ({[key]: value})}
 
   array -> "[" items "]"  ${select(1)}
   items -> null         ${newArray}
-         | items value  ${([xs, x]) => {xs.push(x); return xs}}
+         | items value  ${(xs, x) => {xs.push(x); return xs}}
 
   value -> object   ${id}
          | array    ${id}
@@ -36,8 +36,8 @@ const jsonGrammar = bnf`
          | "false"  ${() => false}
          | "null"   ${() => null}
 
-  number -> %NUMBER  ${([tok]) => parseFloat(tok.value) }}
-  string -> %STRING  ${([tok]) => JSON.parse(tok.value) }}
+  number -> %NUMBER  ${tok => parseFloat(tok.value) }}
+  string -> %STRING  ${tok => JSON.parse(tok.value) }}
 `
 ```
 
