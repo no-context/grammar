@@ -1,4 +1,4 @@
-grammar
+grammar (WIP)
 =======
 
 Define context-free grammars for use with parsing tools like [nearley](https://github.com/Hardmath123/nearley).
